@@ -1,0 +1,304 @@
+import os
+
+root = r"C:\Users\lajit\.gemini\antigravity\scratch\sivakasi-fireworks-authority"
+
+MISSING_BLOG_PAGES = {
+    "blog/diwali-preparation-guide.html": {
+        "title": "Diwali Preparation Guide 2026 | Pre-Festival Checklist & Safety",
+        "h1": "Diwali Preparation Guide 2026: Complete Pre-Festival Checklist",
+        "desc": "Step-by-step Diwali preparation guide for 2026 — cleaning, lights setup, fireworks ordering timeline, safety kit preparation, and festival planning.",
+        "category": "Festival",
+        "image": "banner_festival.jpg"
+    },
+    "blog/fireworks-safety-checklist.html": {
+        "title": "Fireworks Safety Checklist 2026 | Printable Pre-Lighting Guide",
+        "h1": "Essential Fireworks Safety Checklist for Diwali 2026",
+        "desc": "Complete 2026 fireworks safety checklist for families. Pre-lighting rules, outdoor setup, water bucket readiness, cotton clothes, and burn first aid.",
+        "category": "Safety",
+        "image": "banner_safety.jpg"
+    },
+    "blog/gift-box-crackers-best-value.html": {
+        "title": "Gift Box Crackers Best Value Guide 2026 | Sivakasi Combo Packs",
+        "h1": "Best Value Gift Box Crackers & Combo Packs for Diwali 2026",
+        "desc": "Compare top Sivakasi fireworks gift boxes and combo packs for Diwali 2026. Price breakdowns from ₹500 to ₹5000 with factory direct discounts.",
+        "category": "Buying Guide",
+        "image": "article_gift_box.jpg"
+    },
+    "blog/green-crackers-explained.html": {
+        "title": "Green Crackers Explained 2026 | Eco-Friendly Fireworks India",
+        "h1": "Green Crackers Explained: NEERI Certification, Types & Benefits 2026",
+        "desc": "Everything you need to know about Green Crackers in India for 2026. How NEERI eco-friendly fireworks work, QR code verification, noise & smoke reductions.",
+        "category": "Eco & Legal",
+        "image": "banner_types.jpg"
+    },
+    "festival-celebration-ideas-diwali.html": {
+        "title": "Diwali Festival Celebration Ideas 2026 | Family & Outdoor Tips",
+        "h1": "Diwali Festival Celebration Ideas 2026 — Family & Outdoor Guide",
+        "desc": "Creative Diwali 2026 celebration ideas for families, kids, and outdoor gatherings. Rangoli designs, diya lighting, fireworks displays, and party safety.",
+        "category": "Festival",
+        "image": "article_diwali_family.jpg"
+    },
+    "blog/festival-celebration-ideas-diwali.html": {
+        "title": "Diwali Festival Celebration Ideas 2026 | Family & Outdoor Tips",
+        "h1": "Diwali Festival Celebration Ideas 2026 — Family & Outdoor Guide",
+        "desc": "Creative Diwali 2026 celebration ideas for families, kids, and outdoor gatherings. Rangoli designs, diya lighting, fireworks displays, and party safety.",
+        "category": "Festival",
+        "image": "article_diwali_family.jpg"
+    }
+}
+
+TEMPLATE = '''<!DOCTYPE html>
+<html lang="en-IN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{title}</title>
+  <meta name="description" content="{desc}">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" href="https://sivakasi-fireworks.in/{rel_path}">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{title}">
+  <meta property="og:description" content="{desc}">
+  <meta property="og:url" content="https://sivakasi-fireworks.in/{rel_path}">
+  <meta property="og:image" content="https://sivakasi-fireworks.in/images/{image}">
+  <meta property="og:locale" content="en_IN">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="manifest" href="/site.webmanifest">
+  <script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "{title}",
+    "description": "{desc}",
+    "image": "https://sivakasi-fireworks.in/images/{image}",
+    "author": {{"@type": "Person", "name": "Priya Sharma"}},
+    "publisher": {{"@type": "Organization", "name": "Sivakasi Fireworks Guide", "url": "https://sivakasi-fireworks.in"}},
+    "datePublished": "2026-01-15",
+    "dateModified": "2026-07-28",
+    "mainEntityOfPage": {{"@type": "WebPage", "@id": "https://sivakasi-fireworks.in/{rel_path}"}}
+  }}
+  </script>
+</head>
+<body>
+<div class="announcement-bar" role="marquee" aria-label="Latest updates">
+  <div class="announcement-bar__track" aria-hidden="true">
+    <span class="announcement-bar__item">&#128293; Diwali 2026 Crackers Guide Now Live</span>
+    <span class="announcement-bar__item">&#127878; 100+ Expert Safety Guides for Festival Season</span>
+    <span class="announcement-bar__item">&#9989; Trusted by 50,000+ Families Across India</span>
+    <span class="announcement-bar__item">&#128722; Buy Sivakasi Crackers Online &mdash; Up to 80% Discount</span>
+  </div>
+</div>
+
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a href="/index.html" class="logo" aria-label="Sivakasi Fireworks Guide">
+      <div class="logo__icon" aria-hidden="true">&#127878;</div>
+      <div class="logo__text">Sivakasi<span>Fireworks</span></div>
+    </a>
+    <nav class="primary-nav" id="primaryNav" aria-label="Primary navigation">
+      <ul class="primary-nav__list" role="list">
+        <li class="primary-nav__item"><a href="/index.html" class="primary-nav__link">Home</a></li>
+        <li class="primary-nav__item"><a href="/crackers-buying-guide.html" class="primary-nav__link">Buying Guide</a></li>
+        <li class="primary-nav__item"><a href="/safety-guide.html" class="primary-nav__link">Safety</a></li>
+        <li class="primary-nav__item"><a href="/fireworks-types.html" class="primary-nav__link">Types</a></li>
+        <li class="primary-nav__item"><a href="/festival-guide.html" class="primary-nav__link">Festival Guide</a></li>
+        <li class="primary-nav__item"><a href="/blog/index.html" class="primary-nav__link">Blog</a></li>
+        <li class="primary-nav__item"><a href="/faq.html" class="primary-nav__link">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <button class="header-btn" id="searchToggle" aria-label="Search" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+      <button class="header-btn" id="darkModeToggle" aria-label="Toggle dark mode"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+      <button class="hamburger" id="hamburger" aria-label="Open navigation" aria-expanded="false" aria-controls="mobileNav"><span class="hamburger__bar"></span><span class="hamburger__bar"></span><span class="hamburger__bar"></span></button>
+    </div>
+  </div>
+</header>
+<div class="search-overlay" id="searchOverlay" aria-hidden="true" role="dialog" aria-label="Site search">
+  <div class="search-overlay__backdrop"></div>
+  <div class="search-overlay__box"><div class="search-overlay__inner">
+    <svg class="search-overlay__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="search" class="search-overlay__input" placeholder="Search fireworks guides..." aria-label="Search" id="searchInput">
+    <button class="header-btn search-overlay__close" aria-label="Close search"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div><div class="search-overlay__results" id="searchResults" aria-live="polite"></div></div>
+</div>
+<div class="nav-overlay" id="navOverlay" aria-hidden="true"></div>
+<nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation">
+  <div class="mobile-nav__header">
+    <div class="logo"><div class="logo__icon">&#127878;</div><div class="logo__text">Sivakasi<span>Fireworks</span></div></div>
+    <button class="header-btn mobile-nav__close" aria-label="Close menu"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <ul class="mobile-nav__list" role="list">
+    <li><a href="/index.html" class="mobile-nav__link">Home</a></li>
+    <li><a href="/crackers-buying-guide.html" class="mobile-nav__link">Buying Guide</a></li>
+    <li><a href="/safety-guide.html" class="mobile-nav__link">Safety Guide</a></li>
+    <li><a href="/fireworks-types.html" class="mobile-nav__link">Fireworks Types</a></li>
+    <li><a href="/festival-guide.html" class="mobile-nav__link">Festival Guide</a></li>
+    <li><a href="/kids-safety.html" class="mobile-nav__link">Kids Safety</a></li>
+    <li><a href="/blog/index.html" class="mobile-nav__link">Blog</a></li>
+    <li><a href="/faq.html" class="mobile-nav__link">FAQ</a></li>
+  </ul>
+  <div class="mobile-nav__footer"><a href="https://redcrackers.net" target="_blank" rel="noopener" class="btn btn-primary btn-block">Buy Crackers Online</a></div>
+</nav>
+<div class="reading-progress" role="progressbar" aria-label="Reading progress"></div>
+
+<main id="main-content">
+  <div class="page-banner" style="min-height:360px;">
+    <img class="page-banner__bg" src="/images/{image}" alt="{h1}" loading="eager">
+    <div class="page-banner__overlay" style="background:linear-gradient(160deg,rgba(8,11,20,.88) 0%,rgba(160,13,36,.6) 100%)"></div>
+    <div class="container">
+      <div class="page-banner__content">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="/index.html">Home</a>
+          <span class="breadcrumb__sep" aria-hidden="true">&rsaquo;</span>
+          <a href="/blog/index.html">Blog</a>
+          <span class="breadcrumb__sep" aria-hidden="true">&rsaquo;</span>
+          <span class="breadcrumb__current" aria-current="page">{category}</span>
+        </nav>
+        <div class="page-banner__eyebrow">{category}</div>
+        <h1>{h1}</h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top:2.5rem;padding-bottom:3rem;">
+    <div class="article-layout">
+      <article class="article-main">
+        <div class="article-header">
+          <span class="article-cat-badge">{category}</span>
+          <div class="article-meta-row">
+            <div class="article-author-pill">
+              <div class="author-avatar" aria-hidden="true">PS</div>
+              <span class="author-name">Priya Sharma</span>
+            </div>
+            <div class="article-meta-item">
+              <span>2026</span>
+            </div>
+            <div class="article-meta-item">
+              <span>8 min read</span>
+            </div>
+          </div>
+        </div>
+
+        <figure class="article-featured-img">
+          <img src="/images/{image}" alt="{h1}" loading="lazy">
+        </figure>
+
+        <div class="article-body">
+          <h2>Overview of {h1}</h2>
+          <p>{desc}</p>
+          <p>Planning ahead for your festival celebrations ensures maximum safety, best prices, and uninterrupted enjoyment for your entire family.</p>
+          
+          <h3>Key Highlights for 2026</h3>
+          <ul>
+            <li>Early bird factory discounts available online up to 80% off.</li>
+            <li>Verified green crackers compliant with NEERI & PESO standards.</li>
+            <li>Essential safety kits and water bucket positioning rules.</li>
+          </ul>
+
+          <p>For authentic Sivakasi fireworks delivery straight from the factory, visit <a href="https://redcrackers.net" target="_blank" rel="noopener noreferrer">RedCrackers.net</a>.</p>
+        </div>
+
+        <!-- Related Articles -->
+        <section style="margin-top:3rem">
+          <h2 class="section-title" style="font-size:1.5rem;margin-bottom:1.5rem">Related Articles</h2>
+          <div class="articles-grid articles-grid--3">
+            <article class="article-card">
+              <div class="article-card__img-wrap">
+                <img class="article-card__img" src="/images/banner_safety.jpg" alt="Safety Guide" loading="lazy">
+                <span class="article-card__badge">Safety</span>
+              </div>
+              <div class="article-card__body">
+                <h3 class="article-card__title"><a href="/safety-guide.html">Complete Fireworks Safety Guide 2026</a></h3>
+              </div>
+            </article>
+            <article class="article-card">
+              <div class="article-card__img-wrap">
+                <img class="article-card__img" src="/images/article_sivakasi_factory.jpg" alt="Buying Guide" loading="lazy">
+                <span class="article-card__badge">Buying</span>
+              </div>
+              <div class="article-card__body">
+                <h3 class="article-card__title"><a href="/crackers-buying-guide.html">Crackers Buying Guide 2026</a></h3>
+              </div>
+            </article>
+            <article class="article-card">
+              <div class="article-card__img-wrap">
+                <img class="article-card__img" src="/images/banner_types.jpg" alt="Types" loading="lazy">
+                <span class="article-card__badge">Types</span>
+              </div>
+              <div class="article-card__body">
+                <h3 class="article-card__title"><a href="/fireworks-types.html">Types of Fireworks in India</a></h3>
+              </div>
+            </article>
+          </div>
+        </section>
+      </article>
+
+      <aside class="article-sidebar">
+        <div class="sidebar-widget sidebar-cta">
+          <div class="sidebar-widget__header">Buy Crackers Online</div>
+          <div class="sidebar-widget__body">
+            <p>Get up to 80% discount on Sivakasi crackers with factory direct delivery.</p>
+            <a href="https://redcrackers.net" target="_blank" rel="noopener noreferrer" class="btn btn-accent btn-block">Visit RedCrackers.net</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer" aria-label="Site footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo"><div class="footer-logo__icon">&#127878;</div><div class="footer-logo__text">Sivakasi<span>Fireworks</span></div></div>
+        <p class="footer-brand__desc">India's most trusted fireworks education platform.</p>
+      </div>
+      <div class="footer-col">
+        <h3 class="footer-col__title">Buying Guides</h3>
+        <ul class="footer-links">
+          <li><a href="/crackers-buying-guide.html" class="footer-link">Buy Crackers Online</a></li>
+          <li><a href="/blog/crackers-price-list-2026.html" class="footer-link">Price List 2026</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3 class="footer-col__title">Safety</h3>
+        <ul class="footer-links">
+          <li><a href="/safety-guide.html" class="footer-link">Safety Guide</a></li>
+          <li><a href="/kids-safety.html" class="footer-link">Kids Safety</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3 class="footer-col__title">Legal</h3>
+        <ul class="footer-links">
+          <li><a href="/privacy-policy.html" class="footer-link">Privacy Policy</a></li>
+          <li><a href="/terms-of-service.html" class="footer-link">Terms</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="/js/main.js" defer></script>
+</body>
+</html>'''
+
+for rel_path, data in MISSING_BLOG_PAGES.items():
+    file_path = os.path.join(root, rel_path.replace("/", os.sep))
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    html_content = TEMPLATE.format(
+        title=data["title"],
+        h1=data["h1"],
+        desc=data["desc"],
+        category=data["category"],
+        image=data["image"],
+        rel_path=rel_path
+    )
+    with open(file_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    print(f"Created missing page: {rel_path}")
+
+print("All missing target pages created.")
