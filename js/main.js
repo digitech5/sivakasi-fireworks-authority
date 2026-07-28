@@ -1,644 +1,505 @@
 /**
- * Sivakasi Fireworks Guide — Main JavaScript
- * Version 2.0 | Optimized for Core Web Vitals
+ * Sivakasi Fireworks Guide — Production JS v4.0
+ * Modules: Header, Mobile Nav, Search, FAQ, Scroll, Lazy Load, Animations, Dark Mode, Counter
  */
-
 'use strict';
 
-// =============================================
-// UTILITY FUNCTIONS
-// =============================================
+/* ── Utilities ── */
+const $ = (sel, ctx = document) => ctx.querySelector(sel);
+const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
+const on = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
 
-const $ = (selector, context = document) => context.querySelector(selector);
-const $$ = (selector, context = document) => [...context.querySelectorAll(selector)];
-
-function debounce(fn, delay = 150) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn(...args), delay);
-  };
-}
-
-function throttle(fn, limit = 100) {
-  let lastCall = 0;
-  return (...args) => {
-    const now = Date.now();
-    if (now - lastCall >= limit) {
-      lastCall = now;
-      fn(...args);
-    }
-  };
-}
-
-// =============================================
-// 1. STICKY HEADER
-// =============================================
-
-function initStickyHeader() {
-  const header = $('#siteHeader');
+/* ================================================================
+   1. HEADER — sticky hide/show on scroll
+   ================================================================ */
+(function initHeader() {
+  const header = $('.site-header');
   if (!header) return;
+  let lastY = 0, ticking = false;
+  const THRESHOLD = 80;
 
-  let lastScroll = 0;
-
-  window.addEventListener('scroll', throttle(() => {
-    const current = window.scrollY;
-
-    if (current > 50) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
-    }
-
-    // Hide header on scroll down, show on scroll up (optional UX enhancement)
-    if (current > 300 && current > lastScroll) {
-      header.style.transform = 'translateY(-100%)';
-    } else {
-      header.style.transform = 'translateY(0)';
-    }
-
-    lastScroll = Math.max(0, current);
-  }, 50));
-}
-
-// =============================================
-// 2. MOBILE HAMBURGER MENU
-// =============================================
-
-function initMobileMenu() {
-  const hamburger = $('#hamburger');
-  const nav = $('#mainNav');
-  const overlay = document.createElement('div');
-  overlay.className = 'nav-overlay';
-  document.body.appendChild(overlay);
-
-  if (!hamburger || !nav) return;
-
-  function openMenu() {
-    nav.classList.add('open');
-    hamburger.classList.add('active');
-    hamburger.setAttribute('aria-expanded', 'true');
-    overlay.classList.add('show');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeMenu() {
-    nav.classList.remove('open');
-    hamburger.classList.remove('active');
-    hamburger.setAttribute('aria-expanded', 'false');
-    overlay.classList.remove('show');
-    document.body.style.overflow = '';
-  }
-
-  hamburger.addEventListener('click', () => {
-    const isOpen = nav.classList.contains('open');
-    isOpen ? closeMenu() : openMenu();
-  });
-
-  overlay.addEventListener('click', closeMenu);
-
-  // Close on link click
-  $$('a', nav).forEach(link => {
-    link.addEventListener('click', closeMenu);
-  });
-
-  // Close on Escape key
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeMenu();
-  });
-}
-
-// =============================================
-// 3. SEARCH BAR TOGGLE
-// =============================================
-
-function initSearch() {
-  const toggle = $('#searchToggle');
-  const bar = $('#searchBar');
-  const input = $('#siteSearch');
-
-  if (!toggle || !bar) return;
-
-  toggle.addEventListener('click', () => {
-    const isOpen = bar.classList.contains('open');
-    bar.classList.toggle('open');
-    bar.setAttribute('aria-hidden', isOpen ? 'true' : 'false');
-    if (!isOpen && input) {
-      setTimeout(() => input.focus(), 100);
-    }
-  });
-
-  // Search submit
-  if (input) {
-    input.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        const query = input.value.trim();
-        if (query) {
-          // Redirect to blog page with search param
-          window.location.href = `/blog/index.html?search=${encodeURIComponent(query)}`;
+  function onScroll() {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        header.classList.toggle('is-scrolled', y > 10);
+        // Hide on scroll down past threshold, show on scroll up
+        if (y > THRESHOLD) {
+          header.classList.toggle('is-hidden', y > lastY + 8);
+        } else {
+          header.classList.remove('is-hidden');
         }
-      }
-    });
-  }
-
-  // Close on outside click
-  document.addEventListener('click', (e) => {
-    if (!bar.contains(e.target) && !toggle.contains(e.target)) {
-      bar.classList.remove('open');
-      bar.setAttribute('aria-hidden', 'true');
-    }
-  });
-}
-
-// =============================================
-// 4. FAQ ACCORDION
-// =============================================
-
-function initFaqAccordion() {
-  const faqItems = $$('.faq-item');
-
-  faqItems.forEach(item => {
-    const question = item.querySelector('.faq-question');
-    const answer = item.querySelector('.faq-answer');
-    const icon = item.querySelector('.faq-icon');
-
-    if (!question || !answer) return;
-
-    question.addEventListener('click', () => {
-      const isActive = item.classList.contains('active');
-
-      // Close all others (comment out for multi-open behavior)
-      faqItems.forEach(other => {
-        if (other !== item) {
-          other.classList.remove('active');
-          const otherAnswer = other.querySelector('.faq-answer');
-          if (otherAnswer) otherAnswer.style.maxHeight = null;
-        }
+        lastY = y;
+        ticking = false;
       });
+      ticking = true;
+    }
+  }
 
-      item.classList.toggle('active', !isActive);
+  on(window, 'scroll', onScroll, { passive: true });
+  onScroll();
+})();
 
-      if (!isActive) {
-        answer.style.maxHeight = answer.scrollHeight + 'px';
-      } else {
-        answer.style.maxHeight = null;
+/* ================================================================
+   2. MOBILE NAV
+   ================================================================ */
+(function initMobileNav() {
+  const hamburger = $('#hamburger');
+  const mobileNav = $('.mobile-nav');
+  const overlay = $('.nav-overlay');
+  const closeBtn = $('.mobile-nav__close');
+
+  function open() {
+    hamburger?.classList.add('is-active');
+    mobileNav?.classList.add('is-open');
+    overlay?.classList.add('is-visible');
+    hamburger?.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    mobileNav?.querySelector('.mobile-nav__link')?.focus();
+  }
+
+  function close() {
+    hamburger?.classList.remove('is-active');
+    mobileNav?.classList.remove('is-open');
+    overlay?.classList.remove('is-visible');
+    hamburger?.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    hamburger?.focus();
+  }
+
+  on(hamburger, 'click', () => {
+    mobileNav?.classList.contains('is-open') ? close() : open();
+  });
+
+  on(overlay, 'click', close);
+  on(closeBtn, 'click', close);
+
+  // Close on nav link click
+  $$('.mobile-nav__link').forEach(link => on(link, 'click', close));
+
+  // Close on Escape
+  on(document, 'keydown', e => {
+    if (e.key === 'Escape' && mobileNav?.classList.contains('is-open')) close();
+  });
+
+  // Active nav link
+  const currentPath = location.pathname.split('/').pop() || 'index.html';
+  $$('.primary-nav__link, .mobile-nav__link').forEach(link => {
+    const href = link.getAttribute('href')?.split('/').pop();
+    if (href && (href === currentPath || (currentPath === '' && href === 'index.html'))) {
+      link.classList.add('is-active');
+    }
+  });
+})();
+
+/* ================================================================
+   3. SEARCH OVERLAY
+   ================================================================ */
+(function initSearch() {
+  const toggle = $('#searchToggle');
+  const overlay = $('.search-overlay');
+  const input = $('.search-overlay__input');
+  const closeBtn = $('.search-overlay__close');
+  const resultsBox = $('.search-overlay__results');
+  if (!toggle || !overlay) return;
+
+  // Article index for search (replace with real data)
+  const articles = [
+    { title: 'Complete Sivakasi Crackers Online Buying Guide 2026', cat: 'Buying', url: '/blog/sivakasi-crackers-online-buying-guide.html' },
+    { title: 'Diwali Safety Tips: Complete Family Guide 2026', cat: 'Safety', url: '/blog/diwali-safety-tips-complete-guide.html' },
+    { title: 'Types of Fireworks in India Explained', cat: 'Guide', url: '/blog/types-of-fireworks-in-india.html' },
+    { title: 'Best Sparklers to Buy Online for Diwali 2026', cat: 'Sparklers', url: '/blog/best-sparklers-for-diwali.html' },
+    { title: 'How to Store Crackers Safely', cat: 'Safety', url: '/blog/how-to-store-crackers-safely.html' },
+    { title: 'Kids Fireworks Safety Guide', cat: 'Safety', url: '/blog/kids-fireworks-safety-guide.html' },
+    { title: 'Crackers Price List 2026 — What Everything Costs', cat: 'Price', url: '/blog/crackers-price-list-2026.html' },
+    { title: 'Online Crackers vs Local Shop — 2026 Comparison', cat: 'Buying', url: '/blog/online-crackers-vs-local-shop.html' },
+    { title: 'Rockets Fireworks Buying Guide', cat: 'Rockets', url: '/blog/rocket-fireworks-buying-guide.html' },
+    { title: 'Flower Pots Fireworks Guide', cat: 'Types', url: '/blog/flower-pots-fireworks-guide.html' },
+    { title: 'Gift Box Crackers Guide', cat: 'Buying', url: '/blog/gift-boxes-fireworks-guide.html' },
+    { title: 'Sivakasi History — Fireworks Capital of India', cat: 'History', url: '/blog/sivakasi-history-fireworks-capital.html' },
+    { title: 'Eco-Friendly Fireworks India 2026', cat: 'Guide', url: '/blog/eco-friendly-fireworks-india.html' },
+    { title: 'Ground Chakkars — Complete Guide', cat: 'Types', url: '/blog/ground-chakkars-guide.html' },
+    { title: 'Fancy Fireworks Guide', cat: 'Types', url: '/blog/fancy-fireworks-guide.html' },
+  ];
+
+  let debounceTimer;
+  function doSearch(q) {
+    if (!q.trim() || q.length < 2) { if(resultsBox) resultsBox.innerHTML=''; return; }
+    const matches = articles.filter(a => a.title.toLowerCase().includes(q.toLowerCase())).slice(0, 6);
+    if (!resultsBox) return;
+    if (!matches.length) {
+      resultsBox.innerHTML = `<div class="search-empty">No results found for "<strong>${q}</strong>"</div>`;
+      return;
+    }
+    resultsBox.innerHTML = matches.map(m => `
+      <a href="${m.url}" class="search-result-item">
+        <span class="search-result-item__cat">${m.cat}</span>
+        <span class="search-result-item__title">${m.title}</span>
+      </a>`).join('');
+  }
+
+  function openSearch() {
+    overlay.classList.add('is-open');
+    overlay.setAttribute('aria-hidden', 'false');
+    toggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => input?.focus(), 100);
+  }
+
+  function closeSearch() {
+    overlay.classList.remove('is-open');
+    overlay.setAttribute('aria-hidden', 'true');
+    toggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    if (input) input.value = '';
+    if (resultsBox) resultsBox.innerHTML = '';
+  }
+
+  on(toggle, 'click', openSearch);
+  on(closeBtn, 'click', closeSearch);
+  on(overlay.querySelector('.search-overlay__backdrop'), 'click', closeSearch);
+  on(document, 'keydown', e => { if (e.key === 'Escape') closeSearch(); });
+  on(input, 'input', e => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => doSearch(e.target.value), 200);
+  });
+})();
+
+/* ================================================================
+   4. FAQ ACCORDION
+   ================================================================ */
+(function initFAQ() {
+  $$('.faq-question').forEach(btn => {
+    btn.setAttribute('role', 'button');
+    const answerId = btn.getAttribute('aria-controls');
+    const answer = answerId ? document.getElementById(answerId) : btn.closest('.faq-item')?.querySelector('.faq-answer');
+    if (!answer) return;
+
+    on(btn, 'click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+
+      // Close all in same list
+      const list = btn.closest('.faq-list');
+      if (list) {
+        $$('.faq-question', list).forEach(q => {
+          q.setAttribute('aria-expanded', 'false');
+          const a = document.getElementById(q.getAttribute('aria-controls') || '') || q.closest('.faq-item')?.querySelector('.faq-answer');
+          if (a) a.setAttribute('aria-hidden', 'true');
+        });
+      }
+
+      if (!isOpen) {
+        btn.setAttribute('aria-expanded', 'true');
+        answer.setAttribute('aria-hidden', 'false');
       }
     });
 
-    // Set initial icon
-    if (!icon) {
-      const plusIcon = document.createElement('span');
-      plusIcon.className = 'faq-icon';
-      plusIcon.textContent = '+';
-      question.appendChild(plusIcon);
-    }
+    on(btn, 'keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); }
+    });
   });
-}
+})();
 
-// =============================================
-// 5. SCROLL TO TOP BUTTON
-// =============================================
+/* ================================================================
+   5. SCROLL-TO-TOP
+   ================================================================ */
+(function initScrollTop() {
+  const btn = $('.scroll-top');
+  if (!btn) return;
+  const SHOW_AT = 400;
+  on(window, 'scroll', () => {
+    btn.classList.toggle('is-visible', window.scrollY > SHOW_AT);
+  }, { passive: true });
+  on(btn, 'click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+})();
 
-function initScrollToTop() {
-  const btn = document.createElement('button');
-  btn.className = 'scroll-top';
-  btn.innerHTML = '↑';
-  btn.setAttribute('aria-label', 'Scroll to top');
-  document.body.appendChild(btn);
+/* ================================================================
+   6. READING PROGRESS BAR
+   ================================================================ */
+(function initReadingProgress() {
+  const bar = $('.reading-progress');
+  const article = $('.article-body') || $('main');
+  if (!bar || !article) return;
 
-  window.addEventListener('scroll', throttle(() => {
-    btn.classList.toggle('visible', window.scrollY > 400);
-  }, 100));
+  on(window, 'scroll', () => {
+    const rect = article.getBoundingClientRect();
+    const articleTop = rect.top + window.scrollY;
+    const articleH = article.offsetHeight;
+    const progress = Math.min(1, Math.max(0, (window.scrollY - articleTop) / (articleH - window.innerHeight)));
+    bar.style.transform = `scaleX(${progress})`;
+  }, { passive: true });
+})();
 
-  btn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-}
-
-// =============================================
-// 6. READING PROGRESS BAR
-// =============================================
-
-function initReadingProgress() {
-  const bar = $('.reading-progress') || $('#readingProgress');
-  if (!bar) return;
-
-  const article = $('.article-body') || $('article') || $('main');
-  if (!article) return;
-
-  window.addEventListener('scroll', throttle(() => {
-    const articleTop = article.offsetTop;
-    const articleHeight = article.offsetHeight;
-    const windowHeight = window.innerHeight;
-    const scrolled = window.scrollY;
-
-    const progress = Math.min(
-      100,
-      Math.max(0, ((scrolled - articleTop + windowHeight * 0.5) / articleHeight) * 100)
-    );
-
-    bar.style.width = progress + '%';
-  }, 50));
-}
-
-// =============================================
-// 7. TABLE OF CONTENTS AUTO-GENERATOR
-// =============================================
-
-function initTableOfContents() {
-  const tocList = $('.toc-list');
+/* ================================================================
+   7. TABLE OF CONTENTS — auto-generate & highlight
+   ================================================================ */
+(function initTOC() {
+  const tocList = $('.toc__list');
   const articleBody = $('.article-body');
-
   if (!tocList || !articleBody) return;
 
-  // Only auto-generate if TOC list is empty
-  if (tocList.children.length > 0) return;
-
   const headings = $$('h2, h3', articleBody);
-  if (headings.length === 0) return;
+  if (!headings.length) return;
 
-  headings.forEach((heading, i) => {
-    // Ensure heading has an ID
-    if (!heading.id) {
-      heading.id = `section-${i + 1}-${heading.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40)}`;
-    }
-
-    const li = document.createElement('li');
-    const a = document.createElement('a');
-    a.href = `#${heading.id}`;
-    a.textContent = heading.textContent;
-
-    if (heading.tagName === 'H3') {
-      li.style.paddingLeft = '1rem';
-      li.style.fontSize = '0.85rem';
-    }
-
-    li.appendChild(a);
+  headings.forEach((h, i) => {
+    if (!h.id) h.id = `section-${i + 1}`;
+    const li = document.createElement('div');
+    li.className = `toc__item${h.tagName === 'H3' ? ' toc__item--h3' : ''}`;
+    li.innerHTML = `<span class="toc__num">${h.tagName === 'H2' ? i + 1 + '.' : '↳'}</span>
+      <a href="#${h.id}" class="toc__link">${h.textContent}</a>`;
     tocList.appendChild(li);
   });
 
-  // Active TOC link highlighting on scroll
-  const tocLinks = $$('a', tocList);
-  const updateActiveToc = throttle(() => {
-    const scrollPos = window.scrollY + 120;
-    let activeId = '';
-
-    headings.forEach(h => {
-      if (h.offsetTop <= scrollPos) activeId = h.id;
-    });
-
-    tocLinks.forEach(link => {
-      link.classList.toggle('active', link.getAttribute('href') === `#${activeId}`);
-    });
-  }, 100);
-
-  window.addEventListener('scroll', updateActiveToc);
-}
-
-// =============================================
-// 8. SMOOTH SCROLL FOR ANCHOR LINKS
-// =============================================
-
-function initSmoothScroll() {
-  document.addEventListener('click', (e) => {
-    const target = e.target.closest('a[href^="#"]');
-    if (!target) return;
-
-    const id = target.getAttribute('href').slice(1);
-    const el = document.getElementById(id);
-    if (!el) return;
-
-    e.preventDefault();
-
-    const headerHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 72;
-
-    window.scrollTo({
-      top: el.offsetTop - headerHeight - 16,
-      behavior: 'smooth'
-    });
-
-    // Update URL hash without page jump
-    history.pushState(null, null, `#${id}`);
-  });
-}
-
-// =============================================
-// 9. ANIMATE ON SCROLL
-// =============================================
-
-function initAnimateOnScroll() {
-  const elements = $$('.animate-on-scroll');
-  if (!elements.length) return;
-
-  const observer = new IntersectionObserver((entries) => {
+  // Intersection Observer for active link
+  const links = $$('.toc__link', tocList);
+  const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
+        links.forEach(l => l.classList.remove('is-active'));
+        const link = tocList.querySelector(`[href="#${entry.target.id}"]`);
+        link?.classList.add('is-active');
       }
     });
-  }, {
-    threshold: 0.1,
-    rootMargin: '0px 0px -40px 0px'
-  });
+  }, { rootMargin: `-${(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 76) + 32}px 0px -60% 0px` });
 
-  elements.forEach(el => observer.observe(el));
-}
+  headings.forEach(h => observer.observe(h));
+})();
 
-// =============================================
-// 10. LAZY-LOAD IMAGES
-// =============================================
-
-function initLazyLoad() {
-  const images = $$('img[data-src], img[loading="lazy"]');
-
+/* ================================================================
+   8. LAZY IMAGE LOADING
+   ================================================================ */
+(function initLazyImages() {
   if ('loading' in HTMLImageElement.prototype) {
-    // Native lazy loading supported
-    images.forEach(img => {
-      if (img.dataset.src) {
-        img.src = img.dataset.src;
-        img.removeAttribute('data-src');
-      }
+    $$('img[data-src]').forEach(img => {
+      img.src = img.dataset.src;
+      if (img.dataset.srcset) img.srcset = img.dataset.srcset;
+      img.removeAttribute('data-src');
     });
     return;
   }
+  // Fallback IO
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const img = entry.target;
+      img.src = img.dataset.src || img.src;
+      if (img.dataset.srcset) img.srcset = img.dataset.srcset;
+      img.classList.add('loaded');
+      const wrap = img.closest('.img-wrap');
+      if (wrap) wrap.classList.add('img-loaded');
+      io.unobserve(img);
+    });
+  }, { rootMargin: '200px 0px' });
 
-  // Fallback with IntersectionObserver
-  const observer = new IntersectionObserver((entries) => {
+  $$('img[data-src]').forEach(img => io.observe(img));
+
+  // Regular lazy load fade-in
+  $$('img.img-lazy').forEach(img => {
+    if (img.complete) { img.classList.add('loaded'); return; }
+    on(img, 'load', () => img.classList.add('loaded'));
+  });
+})();
+
+/* ================================================================
+   9. SCROLL REVEAL ANIMATIONS
+   ================================================================ */
+(function initReveal() {
+  const els = $$('.reveal, .reveal-scale');
+  if (!els.length || !('IntersectionObserver' in window)) {
+    els.forEach(el => el.classList.add('is-visible'));
+    return;
+  }
+  const io = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        const img = entry.target;
-        if (img.dataset.src) {
-          img.src = img.dataset.src;
-          img.removeAttribute('data-src');
-        }
-        observer.unobserve(img);
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
       }
     });
-  }, { rootMargin: '200px' });
+  }, { rootMargin: '0px 0px -60px 0px', threshold: .1 });
+  els.forEach(el => io.observe(el));
+})();
 
-  images.forEach(img => observer.observe(img));
-}
-
-// =============================================
-// 11. BLOG SEARCH FILTER (Blog Index Page)
-// =============================================
-
-function initBlogSearch() {
-  const searchInput = $('#blogSearch');
-  const cards = $$('.blog-card');
-
-  if (!searchInput || !cards.length) return;
-
-  // Check for URL search param
-  const params = new URLSearchParams(window.location.search);
-  if (params.has('search')) {
-    searchInput.value = params.get('search');
-    filterCards(params.get('search'));
-  }
-
-  searchInput.addEventListener('input', debounce((e) => {
-    filterCards(e.target.value.trim());
-  }, 200));
-
-  function filterCards(query) {
-    const lowerQuery = query.toLowerCase();
-    let visibleCount = 0;
-
-    cards.forEach(card => {
-      const title = (card.dataset.title || card.querySelector('.card-title')?.textContent || '').toLowerCase();
-      const category = (card.dataset.category || card.querySelector('.card-category')?.textContent || '').toLowerCase();
-      const matches = !query || title.includes(lowerQuery) || category.includes(lowerQuery);
-
-      card.style.display = matches ? '' : 'none';
-      if (matches) visibleCount++;
-    });
-
-    // Show/hide no results message
-    const noResults = $('#noResults');
-    if (noResults) {
-      noResults.style.display = visibleCount === 0 ? 'block' : 'none';
-    }
-  }
-}
-
-// =============================================
-// 12. CATEGORY TABS FILTER (Blog Index)
-// =============================================
-
-function initCategoryTabs() {
-  const tabs = $$('.cat-tab');
-  const cards = $$('.blog-card');
-
-  if (!tabs.length || !cards.length) return;
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      const category = tab.dataset.category || 'all';
-
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-
-      cards.forEach(card => {
-        const cardCat = (card.dataset.category || '').toLowerCase();
-        const matches = category === 'all' || cardCat === category.toLowerCase();
-        card.style.display = matches ? '' : 'none';
-      });
-    });
-  });
-}
-
-// =============================================
-// 13. NEWSLETTER FORM (Client-side Validation)
-// =============================================
-
-function initNewsletter() {
-  const forms = $$('.newsletter-form');
-
-  forms.forEach(form => {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const email = form.querySelector('input[type="email"]');
-      if (!email) return;
-
-      const value = email.value.trim();
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-      if (!emailRegex.test(value)) {
-        email.style.borderColor = 'var(--danger)';
-        showMessage(form, 'Please enter a valid email address.', 'error');
-        return;
-      }
-
-      email.style.borderColor = 'var(--success)';
-      email.value = '';
-      showMessage(form, '🎆 You\'re subscribed! Welcome to Sivakasi Fireworks Guide.', 'success');
-    });
-  });
-
-  function showMessage(form, text, type) {
-    let msg = form.querySelector('.form-message');
-    if (!msg) {
-      msg = document.createElement('p');
-      msg.className = 'form-message';
-      msg.style.cssText = 'margin-top: 0.75rem; font-size: 0.875rem; font-weight: 600;';
-      form.appendChild(msg);
-    }
-    msg.textContent = text;
-    msg.style.color = type === 'success' ? 'var(--accent)' : '#ff6b6b';
-
-    setTimeout(() => { if (msg) msg.remove(); }, 5000);
-  }
-}
-
-// =============================================
-// 14. DARK MODE TOGGLE
-// =============================================
-
-function initDarkMode() {
-  const toggle = $('#darkModeToggle');
-  if (!toggle) return;
-
-  const saved = localStorage.getItem('darkMode');
-  if (saved === 'true') {
-    document.documentElement.classList.add('dark');
-    toggle.textContent = '☀️';
-  }
-
-  toggle.addEventListener('click', () => {
-    const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('darkMode', isDark);
-    toggle.textContent = isDark ? '☀️' : '🌙';
-  });
-}
-
-// =============================================
-// 15. ACTIVE NAV LINK HIGHLIGHTING
-// =============================================
-
-function initActiveNav() {
-  const currentPath = window.location.pathname;
-  const navLinks = $$('.nav-list a');
-
-  navLinks.forEach(link => {
-    const linkPath = new URL(link.href, window.location.origin).pathname;
-    if (linkPath === currentPath || (currentPath !== '/' && currentPath.startsWith(linkPath) && linkPath !== '/')) {
-      link.classList.add('active');
-    }
-  });
-}
-
-// =============================================
-// 16. CHECKLIST SAVE STATE (localStorage)
-// =============================================
-
-function initChecklist() {
-  const checklists = $$('.checklist');
-
-  checklists.forEach((list, listIndex) => {
-    const items = $$('li', list);
-
-    items.forEach((item, itemIndex) => {
-      const key = `checklist-${listIndex}-${itemIndex}`;
-      const saved = localStorage.getItem(key);
-
-      if (saved === 'done') item.classList.add('done');
-
-      item.addEventListener('click', () => {
-        item.classList.toggle('done');
-        localStorage.setItem(key, item.classList.contains('done') ? 'done' : '');
-      });
-    });
-  });
-}
-
-// =============================================
-// 17. SHARE BUTTONS
-// =============================================
-
-function initShareButtons() {
-  const copyBtns = $$('.share-btn.copy-link');
-
-  copyBtns.forEach(btn => {
-    btn.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-        const original = btn.textContent;
-        btn.textContent = '✅ Copied!';
-        setTimeout(() => { btn.textContent = original; }, 2000);
-      } catch {
-        // Fallback
-        const input = document.createElement('input');
-        input.value = window.location.href;
-        document.body.appendChild(input);
-        input.select();
-        document.execCommand('copy');
-        document.body.removeChild(input);
-        btn.textContent = '✅ Copied!';
-        setTimeout(() => { btn.textContent = '🔗 Copy Link'; }, 2000);
-      }
-    });
-  });
-}
-
-// =============================================
-// 18. COUNTER ANIMATION (Stats)
-// =============================================
-
-function initCounterAnimation() {
+/* ================================================================
+   10. ANIMATED COUNTERS
+   ================================================================ */
+(function initCounters() {
   const counters = $$('[data-count]');
   if (!counters.length) return;
 
-  const observer = new IntersectionObserver((entries) => {
+  function animateCounter(el) {
+    const target = parseFloat(el.dataset.count);
+    const isDecimal = String(target).includes('.');
+    const suffix = el.dataset.suffix || '';
+    const prefix = el.dataset.prefix || '';
+    const duration = 1600;
+    const start = performance.now();
+
+    function tick(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const current = target * ease;
+      el.textContent = prefix + (isDecimal ? current.toFixed(1) : Math.round(current).toLocaleString('en-IN')) + suffix;
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  const io = new IntersectionObserver(entries => {
     entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      const el = entry.target;
-      const target = parseInt(el.dataset.count);
-      const duration = 2000;
-      const step = target / (duration / 16);
-      let current = 0;
-
-      const update = () => {
-        current = Math.min(current + step, target);
-        el.textContent = Math.floor(current).toLocaleString('en-IN') + (el.dataset.suffix || '');
-        if (current < target) requestAnimationFrame(update);
-      };
-
-      requestAnimationFrame(update);
-      observer.unobserve(el);
+      if (entry.isIntersecting) {
+        animateCounter(entry.target);
+        io.unobserve(entry.target);
+      }
     });
-  }, { threshold: 0.5 });
+  }, { threshold: .5 });
 
-  counters.forEach(el => observer.observe(el));
-}
+  counters.forEach(el => io.observe(el));
+})();
 
-// =============================================
-// INITIALIZE ALL MODULES ON DOM READY
-// =============================================
+/* ================================================================
+   11. DARK MODE
+   ================================================================ */
+(function initDarkMode() {
+  const toggle = $('#darkModeToggle');
+  const html = document.documentElement;
+  const STORAGE_KEY = 'sfg-theme';
 
-function init() {
-  initStickyHeader();
-  initMobileMenu();
-  initSearch();
-  initFaqAccordion();
-  initScrollToTop();
-  initReadingProgress();
-  initTableOfContents();
-  initSmoothScroll();
-  initAnimateOnScroll();
-  initLazyLoad();
-  initBlogSearch();
-  initCategoryTabs();
-  initNewsletter();
-  initDarkMode();
-  initActiveNav();
-  initChecklist();
-  initShareButtons();
-  initCounterAnimation();
-}
+  const saved = localStorage.getItem(STORAGE_KEY);
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = saved ? saved === 'dark' : prefersDark;
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
-}
+  if (isDark) html.setAttribute('data-theme', 'dark');
+  updateIcon(isDark);
+
+  function updateIcon(dark) {
+    if (!toggle) return;
+    toggle.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    toggle.innerHTML = dark
+      ? `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>`
+      : `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+  }
+
+  on(toggle, 'click', () => {
+    const dark = html.getAttribute('data-theme') !== 'dark';
+    html.setAttribute('data-theme', dark ? 'dark' : 'light');
+    localStorage.setItem(STORAGE_KEY, dark ? 'dark' : 'light');
+    updateIcon(dark);
+  });
+})();
+
+/* ================================================================
+   12. NEWSLETTER FORM
+   ================================================================ */
+(function initNewsletter() {
+  $$('.newsletter-form').forEach(form => {
+    on(form, 'submit', e => {
+      e.preventDefault();
+      const input = form.querySelector('input[type="email"]');
+      const btn = form.querySelector('button[type="submit"]');
+      if (!input?.value) return;
+      const originalText = btn.textContent;
+      btn.textContent = '✅ Subscribed!';
+      btn.style.background = 'var(--clr-success)';
+      btn.disabled = true;
+      input.value = '';
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 4000);
+    });
+  });
+})();
+
+/* ================================================================
+   13. SHARE BUTTONS
+   ================================================================ */
+(function initShare() {
+  on(document, 'click', e => {
+    const btn = e.target.closest('[data-share]');
+    if (!btn) return;
+    const action = btn.dataset.share;
+    const url = encodeURIComponent(location.href);
+    const title = encodeURIComponent(document.title);
+
+    const actions = {
+      whatsapp: `https://wa.me/?text=${title}%20${url}`,
+      twitter: `https://twitter.com/intent/tweet?text=${title}&url=${url}`,
+      copy: null,
+    };
+
+    if (action === 'copy') {
+      navigator.clipboard.writeText(location.href).then(() => {
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => btn.textContent = '🔗 Copy Link', 2000);
+      });
+    } else if (actions[action]) {
+      window.open(actions[action], '_blank', 'noopener,width=600,height=400');
+    }
+  });
+})();
+
+/* ================================================================
+   14. CATEGORY FILTER (blog page)
+   ================================================================ */
+(function initCategoryFilter() {
+  const tabs = $$('.category-tab');
+  const cards = $$('.article-card[data-cat]');
+  if (!tabs.length) return;
+
+  tabs.forEach(tab => {
+    on(tab, 'click', () => {
+      tabs.forEach(t => t.classList.remove('is-active'));
+      tab.classList.add('is-active');
+      const cat = tab.dataset.cat;
+
+      cards.forEach(card => {
+        const show = cat === 'all' || card.dataset.cat === cat;
+        card.style.display = show ? '' : 'none';
+        // Re-trigger reveal
+        if (show) card.classList.add('is-visible');
+      });
+    });
+  });
+})();
+
+/* ================================================================
+   15. SMOOTH ANCHOR SCROLL
+   ================================================================ */
+on(document, 'click', e => {
+  const anchor = e.target.closest('a[href^="#"]');
+  if (!anchor) return;
+  const target = document.querySelector(anchor.getAttribute('href'));
+  if (!target) return;
+  e.preventDefault();
+  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  history.replaceState(null, '', anchor.getAttribute('href'));
+});
+
+/* ================================================================
+   16. INIT — DOMContentLoaded
+   ================================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  // Add scroll-top button if not in HTML
+  if (!$('.scroll-top')) {
+    const btn = document.createElement('button');
+    btn.className = 'scroll-top';
+    btn.setAttribute('aria-label', 'Scroll to top');
+    btn.setAttribute('title', 'Scroll to top');
+    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>`;
+    document.body.appendChild(btn);
+    on(btn, 'click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    on(window, 'scroll', () => btn.classList.toggle('is-visible', window.scrollY > 400), { passive: true });
+  }
+
+  // Add reading progress if not in HTML and article body exists
+  if (!$('.reading-progress') && $('.article-body')) {
+    const bar = document.createElement('div');
+    bar.className = 'reading-progress';
+    bar.setAttribute('role', 'progressbar');
+    bar.setAttribute('aria-label', 'Reading progress');
+    document.body.prepend(bar);
+  }
+});
