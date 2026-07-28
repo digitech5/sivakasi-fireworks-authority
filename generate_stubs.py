@@ -1,17 +1,17 @@
-import os
+﻿import os
 import random
 import json
 
 ARTICLES = [
     {"slug": "diwali-fireworks-for-beginners", "title": "Diwali Fireworks for Beginners: A Complete Starter Guide", "desc": "Everything a first-timer needs to know about buying and lighting Diwali fireworks safely.", "category": "Safety"},
     {"slug": "crackers-for-wedding-celebrations", "title": "Fireworks for Weddings: A Complete Guide to Celebration Crackers", "desc": "How to choose the best fireworks for wedding celebrations in India. Types, safety, and buying tips.", "category": "Festival Ideas"},
-    {"slug": "eco-friendly-fireworks-india", "title": "Eco-Friendly Fireworks in India: Green Crackers Guide 2025", "desc": "Complete guide to eco-friendly and green crackers in India — what they are, how they differ, and where to buy.", "category": "Safety"},
+    {"slug": "eco-friendly-fireworks-india", "title": "Eco-Friendly Fireworks in India: Green Crackers Guide 2026", "desc": "Complete guide to eco-friendly and green crackers in India — what they are, how they differ, and where to buy.", "category": "Safety"},
     {"slug": "sivakasi-manufacturers-list", "title": "Top Sivakasi Fireworks Manufacturers: A Complete Industry Guide", "desc": "An overview of the major fireworks manufacturers based in Sivakasi and what makes them trusted.", "category": "Buying Guide"},
     {"slug": "night-sky-fireworks-photography", "title": "How to Photograph Fireworks: Complete Night Photography Guide", "desc": "Expert tips for capturing stunning fireworks photographs on Diwali night — settings, timing, and techniques.", "category": "Festival Ideas"},
     {"slug": "diwali-decoration-ideas", "title": "Diwali Decoration Ideas for Home and Garden", "desc": "50+ creative Diwali decoration ideas using lights, rangoli, diyas, and fireworks displays for stunning celebrations.", "category": "Festival Ideas"},
     {"slug": "fireworks-safety-children-parents", "title": "Fireworks Safety for Parents: A Complete Guide to Protecting Children", "desc": "Everything parents need to know to keep children safe during fireworks celebrations.", "category": "Kids Safety"},
     {"slug": "sparklers-vs-rockets", "title": "Sparklers vs Rockets: Which Fireworks Are Better for Your Celebration?", "desc": "An honest comparison of sparklers and rockets — cost, safety, effect, and which is right for your celebration.", "category": "Buying Guide"},
-    {"slug": "best-fireworks-for-diwali-2025", "title": "Best Fireworks for Diwali 2025: Complete Expert Picks", "desc": "Our expert-curated list of the best fireworks for Diwali celebrations in 2025, by category and budget.", "category": "Buying Guide"},
+    {"slug": "best-fireworks-for-diwali-2026", "title": "Best Fireworks for Diwali 2026: Complete Expert Picks", "desc": "Our expert-curated list of the best fireworks for Diwali celebrations in 2026, by category and budget.", "category": "Buying Guide"},
     {"slug": "ground-spinner-fireworks", "title": "Ground Spinner Fireworks: Complete Guide to Spinning Effects", "desc": "Everything about ground spinner fireworks — chakkars, pinwheels, and spinning wheels. How they work and how to buy.", "category": "Fireworks Types"},
     {"slug": "multi-shot-cakes-guide", "title": "Multi-Shot Cake Fireworks: What They Are and How to Use Them Safely", "desc": "Complete guide to multi-shot fireworks cakes — how they work, what effects they create, and how to use them safely.", "category": "Fireworks Types"},
     {"slug": "buy-crackers-bulk-sivakasi", "title": "How to Buy Crackers in Bulk from Sivakasi: Wholesale Guide", "desc": "Complete guide to buying Sivakasi crackers in bulk — minimum orders, pricing, delivery, and trusted sources.", "category": "Buying Guide"},
@@ -19,7 +19,7 @@ ARTICLES = [
     {"slug": "pencil-fireworks-guide", "title": "Pencil Fireworks: Complete Guide to This Elegant Indian Cracker", "desc": "Everything about pencil fireworks — what they are, how they work, safety rules, and buying guide.", "category": "Fireworks Types"},
     {"slug": "star-bombs-guide", "title": "Star Bombs: India's Most Colourful Ground Fireworks Explained", "desc": "Complete guide to star bombs — how they create colourful star effects and how to use them safely.", "category": "Fireworks Types"},
     {"slug": "phuljadi-sparklers-guide", "title": "Phuljadi Sparklers: The Traditional Indian Sparkler Complete Guide", "desc": "Everything about phuljadi (flower sparklers) — types, safety, traditions, and how to buy the best.", "category": "Fireworks Types"},
-    {"slug": "diwali-crackers-for-kids", "title": "Best Crackers for Kids: Safe Diwali Fireworks for Children 2025", "desc": "Expert-curated guide to the safest fireworks for children of different ages during Diwali celebrations.", "category": "Kids Safety"},
+    {"slug": "diwali-crackers-for-kids", "title": "Best Crackers for Kids: Safe Diwali Fireworks for Children 2026", "desc": "Expert-curated guide to the safest fireworks for children of different ages during Diwali celebrations.", "category": "Kids Safety"},
     {"slug": "twinkling-stars-fireworks", "title": "Twinkling Stars Fireworks: Complete Guide to This Beloved Indian Cracker", "desc": "All about twinkling stars fireworks — what makes them sparkle, how to use them, and best picks.", "category": "Fireworks Types"},
     {"slug": "golden-rain-fireworks", "title": "Golden Rain Fireworks: The Shower of Sparks Guide", "desc": "Everything about golden rain fireworks — the beautiful cascading spark effect, types, safety, and buying guide.", "category": "Fireworks Types"},
     {"slug": "chakkar-safety-rules", "title": "Ground Chakkar Safety Rules: Complete Guide for Safe Spinning Fireworks", "desc": "Comprehensive safety rules for using ground chakkars — surfaces, distances, what to wear, and what to avoid.", "category": "Safety"},
@@ -67,7 +67,7 @@ ARTICLES = [
     {"slug": "sivakasi-safety-incidents", "title": "Fireworks Safety in India: Industry Improvement Over the Years", "desc": "How India's fireworks industry has improved safety standards over the decades — regulations, accidents, improvements.", "category": "Safety"},
     {"slug": "family-fireworks-show-planner", "title": "Planning a Family Fireworks Show at Home: Complete Step-by-Step Guide", "desc": "How to plan and execute a spectacular family fireworks show at home — order, timing, safety zones, and tips.", "category": "Festival Ideas"},
     {"slug": "crackers-for-birthday-parties", "title": "Fireworks for Birthday Parties: A Complete Celebration Guide", "desc": "How to safely incorporate fireworks into birthday party celebrations — types, timing, and safety tips.", "category": "Festival Ideas"},
-    {"slug": "diwali-2025-date-guide", "title": "Diwali 2025: Dates, Traditions, and Celebration Complete Guide", "desc": "When is Diwali 2025? Complete guide to dates, day-by-day traditions, and how to celebrate the Festival of Lights.", "category": "Festival Ideas"},
+    {"slug": "diwali-2026-date-guide", "title": "Diwali 2026: Dates, Traditions, and Celebration Complete Guide", "desc": "When is Diwali 2026? Complete guide to dates, day-by-day traditions, and how to celebrate the Festival of Lights.", "category": "Festival Ideas"},
     {"slug": "cracker-safety-during-pregnancy", "title": "Fireworks Safety During Pregnancy: What Expecting Mothers Should Know", "desc": "Guide for pregnant women on fireworks safety — risks, precautions, and safe distance recommendations.", "category": "Safety"},
     {"slug": "heart-patients-fireworks", "title": "Fireworks and Heart Health: Guide for Cardiac Patients During Diwali", "desc": "How loud fireworks affect heart patients — risks, precautions, and advice for cardiac conditions during Diwali.", "category": "Safety"},
     {"slug": "asthma-fireworks-safety", "title": "Fireworks Safety for Asthma and Respiratory Patients", "desc": "How fireworks smoke affects asthma patients — precautions, medication tips, and safe participation guide.", "category": "Safety"},
@@ -277,8 +277,8 @@ def generate_article(item):
         "url": "https://sivakasi-fireworks.in/images/logo.png"
       }}
     }},
-    "datePublished": "2025-01-15",
-    "dateModified": "2025-01-15"
+    "datePublished": "2026-01-15",
+    "dateModified": "2026-01-15"
   }}
   </script>
   <script type="application/ld+json">
@@ -357,7 +357,7 @@ def generate_article(item):
       <h1>{title}</h1>
       <div class="article-meta">
         <span class="author">By Priya Sharma</span>
-        <span class="date">January 2025</span>
+        <span class="date">January 2026</span>
         <span class="reading-time">5 min read</span>
       </div>
     </header>
@@ -486,7 +486,7 @@ def generate_article(item):
   </div>
   <div class="footer-bottom">
     <div class="container">
-      <p>© 2025 SivakasiFireworks.in — All Rights Reserved. Educational content only. Always follow local laws when purchasing and using fireworks.</p>
+      <p>© 2026 SivakasiFireworks.in — All Rights Reserved. Educational content only. Always follow local laws when purchasing and using fireworks.</p>
     </div>
   </div>
 </footer>

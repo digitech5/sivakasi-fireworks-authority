@@ -1,4 +1,4 @@
-import os
+﻿import os
 import json
 import random
 
@@ -103,7 +103,7 @@ SHARED_FOOTER = """
   </div>
   <div class="footer-bottom">
     <div class="container">
-      <p>© 2025 SivakasiFireworks.in — All Rights Reserved. Educational content only. Always follow local laws when purchasing and using fireworks.</p>
+      <p>© 2026 SivakasiFireworks.in — All Rights Reserved. Educational content only. Always follow local laws when purchasing and using fireworks.</p>
     </div>
   </div>
 </footer>
@@ -148,7 +148,7 @@ categories = [
     },
     {
         "slug": "flower-pots",
-        "title": "Flower Pots Fireworks | Sivakasi Fountain Crackers Guide 2025",
+        "title": "Flower Pots Fireworks | Sivakasi Fountain Crackers Guide 2026",
         "desc": "Everything about flower pot fireworks — how they work, types, safety, buying guide, and the best Sivakasi flower pots for Diwali and family celebrations.",
         "h1": "Flower Pots & Fountain Fireworks",
         "color": "#059669",

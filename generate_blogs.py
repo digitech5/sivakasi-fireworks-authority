@@ -1,4 +1,4 @@
-import os
+﻿import os
 
 BLOG_DIR = r"C:\Users\lajit\.gemini\antigravity\scratch\sivakasi-fireworks-authority\blog"
 os.makedirs(BLOG_DIR, exist_ok=True)
@@ -89,7 +89,7 @@ HEADER = """<!DOCTYPE html>
         <span class="category-badge">Guides</span>
         <h1>{h1}</h1>
         <div class="meta-row">
-          <span>Author: Priya Sharma</span> | <span>Published: Jan 2025</span> | <span>15 min read</span>
+          <span>Author: Priya Sharma</span> | <span>Published: Jan 2026</span> | <span>15 min read</span>
         </div>
       </header>
       <!-- Featured image placeholder with ALT text -->
@@ -172,7 +172,7 @@ FOOTER = """
     </div>
     <div class="footer-bottom">
       <div class="container">
-        <p>© 2025 SivakasiFireworks.in — All Rights Reserved. Educational content only. Always follow local laws when purchasing and using fireworks.</p>
+        <p>© 2026 SivakasiFireworks.in — All Rights Reserved. Educational content only. Always follow local laws when purchasing and using fireworks.</p>
       </div>
     </div>
   </footer>
@@ -228,7 +228,7 @@ def generate_article(meta_title, meta_desc, slug, h1, sections, outbound, no_out
 
 articles = [
     {
-        "meta_title": "How to Buy Sivakasi Crackers Online: Complete Buying Guide 2025",
+        "meta_title": "How to Buy Sivakasi Crackers Online: Complete Buying Guide 2026",
         "meta_desc": "Complete guide to buying Sivakasi crackers online — what to look for, how to verify quality, price tips, delivery, and the best categories for every occasion.",
         "slug": "sivakasi-crackers-online-buying-guide",
         "h1": "How to Buy Sivakasi Crackers Online: Everything You Need to Know",
@@ -237,10 +237,10 @@ articles = [
         "no_outbound": False
     },
     {
-        "meta_title": "Diwali Safety Tips 2025: Complete Guide for Families & Kids",
+        "meta_title": "Diwali Safety Tips 2026: Complete Guide for Families & Kids",
         "meta_desc": "Comprehensive Diwali safety guide with 50+ expert tips for families, kids, and adults. Fire safety, first aid, storage, and legal guidelines for a safe celebration.",
         "slug": "diwali-safety-tips-complete-guide",
-        "h1": "Diwali Safety Tips: Your Complete Family Safety Guide for 2025",
+        "h1": "Diwali Safety Tips: Your Complete Family Safety Guide for 2026",
         "sections": ["Why Diwali Safety Matters", "Before You Start: Preparation Safety Checklist", "Choosing Safe Fireworks for Your Family", "How to Light Fireworks Safely", "Kids Safety Rules During Diwali", "First Aid: What to Do in an Emergency", "Safe Storage of Unused Crackers", "Legal Guidelines and Timing Restrictions", "Eco-Friendly Alternatives", "Post-Diwali Cleanup Safety"],
         "outbound": "",
         "no_outbound": True
@@ -255,16 +255,16 @@ articles = [
         "no_outbound": False
     },
     {
-        "meta_title": "Best Sparklers for Diwali 2025 | Complete Sparkler Buying Guide",
+        "meta_title": "Best Sparklers for Diwali 2026 | Complete Sparkler Buying Guide",
         "meta_desc": "Which sparklers are best for Diwali? Complete guide covering electric sparklers, wire sparklers, color sparklers, lollipop sparklers — with safety tips and price guide.",
         "slug": "best-sparklers-for-diwali",
-        "h1": "Best Sparklers for Diwali 2025: A Complete Buyer's Guide",
+        "h1": "Best Sparklers for Diwali 2026: A Complete Buyer's Guide",
         "sections": ["Why Sparklers Are Every Family's Favourite", "Types of Sparklers Available in India", "Electric Sparklers vs Wire Sparklers", "Colour Sparklers: Red, Green, Blue, Gold", "Lollipop Sparklers for Children", "Size Guide: 10cm, 20cm, 30cm, 50cm", "Safety Rules for Using Sparklers", "How to Get the Perfect Sparkler Photo", "Price Guide and Best Value Picks", "Where to Buy the Best Sparklers"],
         "outbound": 'For a reliable selection of Sivakasi sparklers at competitive prices, <a href="https://redcrackers.net" target="_blank" rel="noopener">Red Crackers</a> stocks a wide variety including lollipop and electric sparkler options.',
         "no_outbound": False
     },
     {
-        "meta_title": "How to Store Crackers Safely at Home | Fireworks Storage Guide 2025",
+        "meta_title": "How to Store Crackers Safely at Home | Fireworks Storage Guide 2026",
         "meta_desc": "Expert guide to storing crackers safely — ideal conditions, containers, what to avoid, how long crackers last, and disposal of unused fireworks.",
         "slug": "how-to-store-crackers-safely",
         "h1": "How to Store Crackers Safely: The Complete Home Storage Guide",
@@ -273,7 +273,7 @@ articles = [
         "no_outbound": True
     },
     {
-        "meta_title": "Kids Fireworks Safety Guide | Complete Parent's Guide for Diwali 2025",
+        "meta_title": "Kids Fireworks Safety Guide | Complete Parent's Guide for Diwali 2026",
         "meta_desc": "Complete guide for parents on keeping kids safe during Diwali and fireworks celebrations — age rules, protective gear, supervision tips, first aid, and safe alternatives.",
         "slug": "kids-fireworks-safety-guide",
         "h1": "Kids Fireworks Safety Guide: A Parent's Complete Handbook for Diwali",
@@ -291,7 +291,7 @@ articles = [
         "no_outbound": False
     },
     {
-        "meta_title": "Fancy Fireworks Guide 2025 | Types, Buying Tips & Best Sivakasi Picks",
+        "meta_title": "Fancy Fireworks Guide 2026 | Types, Buying Tips & Best Sivakasi Picks",
         "meta_desc": "Complete guide to fancy fireworks — peacocks, helicopters, butterflies, spinners, golden rain, sky shots. Expert buying tips and safety advice for spectacular displays.",
         "slug": "fancy-fireworks-guide",
         "h1": "Fancy Fireworks Guide: Everything You Need for a Spectacular Show",
