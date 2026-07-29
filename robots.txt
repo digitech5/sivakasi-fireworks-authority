@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /private/
 
-Sitemap: https://sivakasi-fireworks.in/sitemap.xml
+Sitemap: https://sivakasi-fireworks.netlify.app/sitemap.xml
